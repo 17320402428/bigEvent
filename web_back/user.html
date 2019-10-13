@@ -11,10 +11,12 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
-
+    <script src="./tool/config.js"></script>
 </head>
 
 <body>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./tool/user.js"></script>
     <div class="container-fluid">
         <div class="common_title">
             用户信息修改
@@ -22,49 +24,98 @@
         <div class="container-fluid common_con">
             <form class="form-horizontal article_form">
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
+                    <label for="mingCheng" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" class="form-control" id="mingCheng" value="" name="username">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
+                    <label for="niCheng" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" class="form-control" id="niCheng" value="" name="nickname">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
+                    <label for="e_mail" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
-                    <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="text" class="form-control" id="e_mail" value="" name="emile">
                     </div>
                 </div>
 
                 <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
-                        <div class="col-sm-4">
-                            <input type="password" class="form-control" id="inputEmail3" value="12345678">
-                        </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="" alt="" class="user_pic">
+                        <input type="file" id="inputPassword3" name="user_pic">
                     </div>
-               
-    
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control" id="password" value="" name="password">
+                    </div>
+                </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <!-- <button type="submit" class="btn btn-success">修改</button> -->
+                        <button type="button" class="btn btn-success">修改</button>
                     </div>
                 </div>
             </form>
         </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                    </div>
+                    <div class="modal-body">
+                        请完整填写信息
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                        <!-- <button type="button" class="btn btn-primary">确定</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
+    <script>
+        //将原有信息放入框内
+        user.info_get({
+            success: function (res) {
+                var data = res.data;
+                $('#mingCheng').val(data.username);
+                $('#niCheng').val(data.nickname);
+                $('#e_mail').val(data.email);
+                $('.user_pic').prop('src', data.user_pic);
+                $('#password').val(data.password);
+            }
+        });
+        //将新信息提交
+        $('.btn-success').on('click', function () {
+            var fd = new FormData($('form')[0]);
+            if (fd.get('username') == '' ||
+                fd.get('nickname') == '' ||
+                fd.get('email') == '' ||
+                fd.get('user_pic').size === 0 ||
+                fd.get('password') == '') {
+                $('#myModal').modal('show');
+                return;
+            };
+            user.info_edit({
+                data: fd,
+            })
+        });
+        //将临时的图片地址放入，生成预览图片
+        $('#inputPassword3').on('change', function () {
+            var Url = URL.createObjectURL(this.files[0]);
+            $('.user_pic').prop('src', Url);
+        })
+    </script>
 </body>
 
 </html>

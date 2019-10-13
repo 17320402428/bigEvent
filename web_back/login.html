@@ -9,11 +9,13 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
 </head>
 
 <body>
     <script src="./js/jquery-1.12.4.min.js"></script>
     <script src="./tool/config.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
     <div class="main_wrap">
         <div class="header">
             <a href="#" class="logo"><img src="images/logo.png" alt=""></a>
@@ -31,7 +33,23 @@
                 <input type="button" class="input_sub" value="登 录">
             </form>
         </div>
-
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">重新输入</button>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
         $('.input_sub').on('click', function () {
@@ -45,15 +63,20 @@
                     password: pwd
                 },
                 success: function (res) {
-                    console.log(res);
-                    if (res.code === 200) {
-                        location.href = './index.html';
+                    if (txt !== '' && pwd !== '') {
+                        if (res.code === 200) {
+                            location.href = './index.html';
+                        } else {
+                            $('#myModal').modal('show');
+                            $('.modal-body').text('用户名或密码错误');
+                        }
                     } else {
-                        alert('用户名或密码错误');
+                        $('#myModal').modal('show');
+                        $('.modal-body').text('输入内容为空');
                     }
                 }
-            })
-        })
+            });
+        });
     </script>
 </body>
 
