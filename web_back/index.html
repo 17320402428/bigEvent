@@ -147,11 +147,11 @@
                     }
                 }
             });
-
         });
         //显示用户信息
         user.getInfo({
             success: function (res) {
+                console.log(res);
                 $('.user_img').prop('src', res.data.user_pic);
                 $('#user_id').html('欢迎&nbsp;&nbsp;' + res.data.nickname + '')
             }
