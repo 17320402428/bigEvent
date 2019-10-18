@@ -23,14 +23,14 @@
                 <div class="col-xs-6">
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <option>所有分类</option>
+                            <option value="">所有分类</option>
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
+                            <option value="">所有状态</option>
                             <option>草稿</option>
                             <option>已发布</option>
                         </select>
-                        <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
+                        <button id="btnSearch" class="btn btn-default btn-sm" type="button">筛选</button>
                     </form>
                 </div>
                 <div class="col-xs-6">
@@ -55,26 +55,14 @@
             </table>
 
             <div class="row text-center">
-                <ul class="pagination pagination-sm">
-                    <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
-                    <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
-                    <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                    <li class="page-item"><a href="#" class="page-link">3</a></li>
-                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                    <li class="page-item"><a href="#" class="page-link">5</a></li>
-                    <li class="page-item"><a href="#" class="page-link">6</a></li>
-                    <li class="page-item"><a href="#" class="page-link">7</a></li>
-                    <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
-                </ul>
+                <ul id="pagination-demo" class="pagination-sm"></ul>
             </div>
-
         </div>
     </div>
     <script src="./tool/config.js"></script>
     <script src="./tool/category.js"></script>
     <script src="./js/template-web.js"></script>
+    <script src="./js/jquery.twbsPagination.js"></script>
     <script type="text/html" id="temp">
         {{each data}}
         <tr>
@@ -91,7 +79,9 @@
         {{/each}}
     </script>
     <script type="text/html" id="temp2">
-        {{each }}
+        {{each data}}
+        <option value="{{$value.id}}">{{$value.name}}</option>
+        {{/each}}
     </script>
     <script>
         // 设置左侧菜单
@@ -99,9 +89,11 @@
             window.parent.setMenu(1, 1);
         });
         //获取分类列表及状态列表
-        getFication();
         var type = '';
         var state = '';
+        getFication();
+        var myPage = '';
+        var myTotal;
 
         function getFication() {
             $.ajax({
@@ -109,26 +101,48 @@
                 data: {
                     type: type,
                     state: state,
+                    page: myPage
                 },
                 success: function (res) {
                     var str = template('temp', res);
                     $('#tbody').html(str);
-                    $('#btnSearch')
+                    console.log(res.totalPage);
+                    var totalPages = res.totalPage;
+                    if (totalPages === myTotal) {
+                        return;
+                    } else {
+                        myTotal = totalPages;
+                    }
+                    $('#pagination-demo').twbsPagination('destroy');
+                    $('#pagination-demo').twbsPagination({
+                        first: '首页',
+                        last: '尾页',
+                        prev: '上一页',
+                        next: '下一页',
+                        totalPages: totalPages, // 总页数，需要服务端告诉我们
+                        visiblePages: 7, // 当前最多显示的页号
+                        onPageClick: function (event, page) {
+                            // $('#page-content').text('Page ' + page);
+                            // console.log(page);
+                            myPage = page;
+                            getFication();
+                        }
+                    });
                 }
             });
+
         };
         $('#btnSearch').on('click', function () {
-
+            type = $('#selCategory').val();
+            state = $('#selStatus').val();
+            getFication();
         });
-        $.ajax({
-            url: USER_SEARCH,
-            data: {
-                type : type,
-                state : state
-            },
-            success : function(res){
-                console.log(res.data);
-                template('temp2', res);
+        category.getCate({
+            success: function (res) {
+                if (res.code === 200) {
+                    var str = template('temp2', res);
+                    $('#selCategory').append(str);
+                }
             }
         })
     </script>

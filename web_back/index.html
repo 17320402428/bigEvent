@@ -138,7 +138,7 @@
         //退出登录
         $('#logout').on('click', function () {
             $('#myModal').modal('show');
-        });
+        });  
         $('.btn-primary').on('click', function () {
             user.logout({
                 success: function (res) {
@@ -153,10 +153,10 @@
             success: function (res) {
                 console.log(res);
                 $('.user_img').prop('src', res.data.user_pic);
-                $('#user_id').html('欢迎&nbsp;&nbsp;' + res.data.nickname + '')
+                $('#user_id').html('欢迎&nbsp;&nbsp;' + res.data.nickname + '');
             }
         });
-    </script>
+    </script>                                                                                                                                 
 
 </body>
 
